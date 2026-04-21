@@ -733,7 +733,7 @@ function checkWinCondition() {
         if (isSinglePlayerFiveRounds && roundNumber >= 5) {
             openModal("Game over! Your final score: " + player1Score, endGame);
             console.log("Single Player Five Rounds mode - Game over");
-        } else if (roundNumber < 10 || isSinglePlayer) {
+        } else if (roundNumber <= 10 || isSinglePlayer) {
             awaitingNextRound = true;
             document.getElementById('nextRound').style.display = 'block';
             if (guessCount === 15) {
