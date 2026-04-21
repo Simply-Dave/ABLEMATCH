@@ -116,7 +116,7 @@ socket.on('endRound', ({ roomKey, currentPlayer }) => {
     io.to(roomKey).emit('currentPlayerUpdated', gameStates[roomKey].currentPlayer);
 });
 
-socket.on('updateScore', (roomKey, playerNumber, points) => {
+socket.on('updateScore', (roomKey, playerNumber, points, resultData) => {
     console.log('updateScore socket called')
     if (gameStates[roomKey]) {
         // Update score
@@ -133,8 +133,15 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
         io.to(roomKey).emit('scoreboardUpdated', gameStates[roomKey].scoreboard);
         io.to(roomKey).emit('roundNumberUpdated', gameStates[roomKey].roundNumber);
 
-        // Check for game over condition
+        // Broadcast round result overlay to both players
         const MAX_ROUNDS = 11;
+        if (resultData) {
+            io.to(roomKey).emit('roundResult', {
+                ...resultData,
+                isFinalRound: gameStates[roomKey].roundNumber >= MAX_ROUNDS
+            });
+        }
+
         if (gameStates[roomKey].roundNumber >= MAX_ROUNDS) {
             // Assume determineWinner is a function that returns 'Player 1' or 'Player 2'
             let winner = determineWinner(gameStates[roomKey]);
@@ -208,11 +215,6 @@ socket.on('resetGameRequest', (roomKey) => {
     console.log(`Starting turn for Player 1 in room: ${roomKey}`);
 });
 
-
-socket.on('broadcastRoundResult', (data) => {
-    if (!gameStates[data.roomKey]) return;
-    io.to(data.roomKey).emit('roundResult', data);
-});
 
 socket.on('liveGuess', ({ roomKey, letter, correct, wordState, guessCount }) => {
     if (!gameStates[roomKey]) return;
