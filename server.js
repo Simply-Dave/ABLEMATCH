@@ -209,6 +209,14 @@ socket.on('resetGameRequest', (roomKey) => {
 });
 
 
+socket.on('liveGuess', ({ roomKey, letter, correct, wordState, guessCount }) => {
+    if (!gameStates[roomKey]) return;
+    const pickerSocketId = gameStates[roomKey].currentPlayer === 'Player 1'
+        ? gameStates[roomKey].player1SocketId
+        : gameStates[roomKey].player2SocketId;
+    io.to(pickerSocketId).emit('spectatorUpdate', { letter, correct, wordState, guessCount });
+});
+
 socket.on('startGuessing', (roomKey) => {
     console.log('startGuessing socket called')
     
