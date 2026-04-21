@@ -446,3 +446,150 @@ button:hover {
   }
 }
 
+/* ── Home / Start Screen ───────────────────────────────────────── */
+
+#startScreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #0f172a 0%, #1e3a5f 60%, #0f3460 100%);
+  color: #fff;
+  padding: 40px 24px;
+  z-index: 10;
+  text-align: center;
+  overflow-y: auto;
+}
+
+/* Decorative letter tiles */
+.home-tiles {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.home-tile {
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: 800;
+  border-radius: 10px;
+  color: #fff;
+  text-transform: uppercase;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  animation: tile-drop 0.5s ease both;
+}
+
+.home-tile:nth-child(1) { animation-delay: 0.0s; }
+.home-tile:nth-child(2) { animation-delay: 0.1s; }
+.home-tile:nth-child(3) { animation-delay: 0.2s; }
+.home-tile:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes tile-drop {
+  from { opacity: 0; transform: translateY(-20px) scale(0.8); }
+  to   { opacity: 1; transform: translateY(0)     scale(1);   }
+}
+
+.tile-green  { background-color: #538d4e; }
+.tile-yellow { background-color: #b59f3b; }
+
+/* Title */
+.home-title {
+  font-size: 48px;
+  font-weight: 900;
+  margin: 0 0 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.home-title-accent {
+  color: #4ade80;
+}
+
+/* Tagline */
+.home-tagline {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 44px;
+}
+
+/* Play button */
+.home-play-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 16px 56px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 36px;
+  box-shadow: 0 8px 24px rgba(34,197,94,0.45);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.home-play-btn:hover {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 14px 32px rgba(34,197,94,0.55);
+}
+
+/* How to play collapsible */
+.home-rules {
+  border-top: 1px solid rgba(255,255,255,0.12);
+  padding-top: 20px;
+  max-width: 360px;
+  width: 100%;
+}
+
+.home-rules summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  list-style: none;
+  user-select: none;
+}
+
+.home-rules summary::-webkit-details-marker { display: none; }
+
+.home-rules[open] summary {
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 14px;
+}
+
+.home-rules ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.home-rules li {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  line-height: 1.5;
+}
+
+.home-rules li:last-child { border-bottom: none; }
+
+@media (max-width: 480px) {
+  .home-title  { font-size: 36px; }
+  .home-tile   { width: 48px; height: 48px; font-size: 24px; }
+  .home-play-btn { padding: 14px 40px; font-size: 16px; }
+}
+
