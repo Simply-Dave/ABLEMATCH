@@ -8,6 +8,8 @@ const io = socketIo(server);
 
 app.use(express.static('public')); // Serve static files from the 'public' folder
 
+app.get('/ping', (req, res) => res.sendStatus(200));
+
 const playersInRoom = {}; // Track of players in each room
 const gameStates = {}; // Store game state for each room
 
