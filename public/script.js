@@ -1063,6 +1063,8 @@ document.getElementById('gameScreen').addEventListener('touchmove', function(e) 
 }, { passive: false });
 
 document.getElementById('restartGameButton').addEventListener('click', function() {
-    requestGameReset(); // This should emit the reset event to the server
-    
+    requestGameReset();
 });
+
+// Keep server awake on free-tier hosting — ping every 10 minutes
+setInterval(() => fetch('/ping'), 10 * 60 * 1000);
