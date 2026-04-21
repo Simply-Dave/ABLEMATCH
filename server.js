@@ -138,15 +138,18 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
         if (gameStates[roomKey].roundNumber >= MAX_ROUNDS) {
             // Assume determineWinner is a function that returns 'Player 1' or 'Player 2'
             let winner = determineWinner(gameStates[roomKey]);
-            let winnerName = winner === 'Player 1' ? gameStates[roomKey].player1Name : gameStates[roomKey].player2Name;
-        
+            let winnerName = winner === 'Player 1' ? gameStates[roomKey].player1Name
+                           : winner === 'Player 2' ? gameStates[roomKey].player2Name
+                           : 'Draw';
+            let message = winner === 'Draw' ? "It's a draw!" : `The winner is ${winnerName}!`;
+
             io.in(roomKey).emit('gameOver', {
                 winner: winnerName,
                 player1Name: gameStates[roomKey].player1Name,
                 player2Name: gameStates[roomKey].player2Name,
                 player1Score: gameStates[roomKey].scoreboard.player1Score,
                 player2Score: gameStates[roomKey].scoreboard.player2Score,
-                message: `The winner is ${winnerName}!`
+                message
             });
 
         
