@@ -31,6 +31,45 @@ socket.on('startGuessing', (word) => {
 });
 
 
+socket.on('roundResult', ({ word, guesserName, guessCount, points, correct, isFinalRound }) => {
+    const overlay   = document.getElementById('roundResultOverlay');
+    const wordEl    = document.getElementById('roundResultWordDisplay');
+    const messageEl = document.getElementById('roundResultMessage');
+    const pointsEl  = document.getElementById('roundResultPoints');
+
+    // Build animated word tiles
+    wordEl.innerHTML = '';
+    word.toUpperCase().split('').forEach((letter, i) => {
+        const div = document.createElement('div');
+        div.className = 'round-result-letter' + (correct ? '' : ' round-result-letter-missed');
+        div.textContent = letter;
+        div.style.animationDelay = `${i * 0.08}s`;
+        wordEl.appendChild(div);
+    });
+
+    if (correct) {
+        messageEl.textContent = `${guesserName} guessed it in ${guessCount} ${guessCount === 1 ? 'guess' : 'guesses'}!`;
+        pointsEl.textContent  = `+${points} points`;
+        pointsEl.className    = 'round-result-points';
+    } else {
+        messageEl.textContent = `Nobody guessed the word`;
+        pointsEl.textContent  = '0 points';
+        pointsEl.className    = 'round-result-points round-result-points-zero';
+    }
+
+    overlay.style.display = 'flex';
+
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        if (isFinalRound) {
+            // game over event will arrive separately — nothing to show here
+        } else {
+            awaitingNextRound = true;
+            document.getElementById('nextRound').style.display = 'block';
+        }
+    }, 3000);
+});
+
 socket.on('player2Guessing', () => {
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerOneMessage').style.display = 'none';
@@ -150,8 +189,6 @@ document.addEventListener('DOMContentLoaded', function() {
         player1Score = updatedScoreboard.player1Score;
         player2Score = updatedScoreboard.player2Score;
         updateScoreboard();
-        // Show Next Round for both players — the word picker has no other way to proceed
-        document.getElementById('nextRound').style.display = 'block';
     });
     
 
@@ -689,6 +726,7 @@ document.getElementById('nextRound').addEventListener('click', () => {
 function resetCommonElements() {
     console.log('resetCommonElements function called')
     isGuessing = false;
+    document.getElementById('roundResultOverlay').style.display = 'none';
     document.getElementById('spectatorView').style.display = 'none';
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerTwo').style.display = 'none';
@@ -778,32 +816,26 @@ function checkWinCondition() {
 
     if (winner) {
         isGuessing = false;
-        // Add a 2-second delay before updating the scoreboard
+        if (document.activeElement) document.activeElement.blur();
+
         setTimeout(() => {
             updateScore(winner, points);
             console.log("Winner determined:", winner, "Points Awarded:", points);
-        }, 1000); // 2000 milliseconds = 2 seconds
+        }, 1000);
 
-        // Blur any focused element before showing the alert
-        if (document.activeElement) {
-            document.activeElement.blur();
-        }
-
-        if (isSinglePlayerFiveRounds && roundNumber >= 5) {
-            openModal("Game over! Your final score: " + player1Score, endGame);
-            console.log("Single Player Five Rounds mode - Game over");
-        } else if (roundNumber <= 10 || isSinglePlayer) {
-            awaitingNextRound = true;
-            document.getElementById('nextRound').style.display = 'block';
-            if (guessCount === 15) {
-                showCorrectAnswer();
-            }
-            openModal(winningMessage);
-            console.log("Continuing to next round or single player mode");
-        } else {
-            openModal(winningMessage, endGame);
-            console.log("Multiplayer mode - Game over");
-        }
+        const correct = revealedLetters === secretWord.length;
+        const roomKey = document.getElementById('roomKey').value;
+        socket.emit('broadcastRoundResult', {
+            roomKey,
+            word: secretWord,
+            guesserName,
+            pickerName,
+            guessCount,
+            points,
+            correct,
+            isFinalRound: roundNumber > 10
+        });
+        console.log("Winner determined:", winner, "Points Awarded:", points);
     } else {
         console.log("No winner determined in this round.");
     }
