@@ -10,16 +10,21 @@
   
     <div id="roomkeydisplay"></div>
     <div id="multiplayerRoomEntryScreen" class="screen" style="display: none;">
-        
-        <button id="generatekey" onclick="generateRoomKey()">Generate Room Key</button>
-        <p>
-        <input type="text" id="roomKey" placeholder="Enter room key">
-    
-        <!-- Join Game button -->
-        <br><button onclick="joinRoom()" id="playButton">Join Room</button></br>
+        <div class="home-tiles" style="margin-bottom:16px;">
+            <span class="home-tile tile-green">A</span>
+            <span class="home-tile tile-yellow">B</span>
+            <span class="home-tile tile-green">L</span>
+            <span class="home-tile tile-yellow">E</span>
+        </div>
+        <h2 class="screen-title">Join a Room</h2>
+        <p class="screen-subtitle">Share a key with your opponent then both join</p>
+        <button id="generatekey" class="btn-secondary" onclick="generateRoomKey()">Generate Room Key</button>
+        <br>
+        <input type="text" id="roomKey" placeholder="Room key">
+        <br>
+        <button onclick="joinRoom()" id="playButton">Join Room</button>
         <div id="roomReadyMessage" style="display: none;">
-            <p>Room is ready! Room Key: <span id="displayRoomKey"></span></p>
-            <button id="startGameButton" onclick="startGame()">Start Game</button>
+            <p>Room is ready!</p>
         </div>
     </div>
 <div id="playerDisplay"></div>
@@ -28,7 +33,10 @@
 
 </div>
 
-<div id="waitingForPlayerMessage" style="display:none;">Waiting for other player to join...</div>
+<div id="waitingForPlayerMessage" style="display:none;">
+    <div class="loader"></div>
+    Waiting for opponent to join&hellip;
+</div>
 <div id="waitingForPlayerContainer" style="display:none;">
     <div class="loader"></div> Waiting for other player to join...
 </div>
@@ -91,8 +99,12 @@
     
     
     <div id="gameScreen" style="display:none;">
+        <div class="game-header">ABLE <span class="title-accent">Match</span></div>
         <div id="scoreboard" class="scoreboard">
-            Round <span id="roundNumber">1</span> | <span id="player1Display">Player 1</span>: <span id="player1Score">0</span> <span id="player2Display">Player 2</span>: <span id="player2Score">0</span>
+            Round <span id="roundNumber">1</span> &nbsp;|&nbsp;
+            <span id="player1Display">Player 1</span>: <span id="player1Score">0</span>
+            &nbsp;&mdash;&nbsp;
+            <span id="player2Display">Player 2</span>: <span id="player2Score">0</span>
         </div>
 
         <div id="endGameScreen" style="display:none;">
