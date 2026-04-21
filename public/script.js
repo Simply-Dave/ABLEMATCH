@@ -448,10 +448,6 @@ document.querySelector('#playerTwo h2').textContent = `${player2Name}: Guess the
     document.getElementById('startScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
     document.getElementById('nextRound').style.display = 'none';
-
-    // Attach event listener to the Next Round button
-    document.getElementById('nextRound').addEventListener('click', prepareForNextRound);
-
     document.getElementById('nameEntryScreen').style.display = 'none';
 
     showUIForRole('Player 1'); // Player 1 always picks first
@@ -647,6 +643,7 @@ function resetCommonElements() {
     guessedLetters = [];
     document.getElementById('wordDisplay').innerHTML = '';
     document.getElementById('letterGuesses').innerHTML = '';
+    document.getElementById('correctAnswer').style.display = 'none';
     resetKeypad();
     updateLettersLeft();
 }
