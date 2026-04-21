@@ -250,6 +250,38 @@ socket.on('startGuessing', (roomKey) => {
     });
     
 
+    socket.on('rejoinRoom', ({ roomKey, playerName, playerNumber }) => {
+        console.log(`${playerName} (${playerNumber}) rejoining room ${roomKey}`);
+        if (!gameStates[roomKey]) {
+            console.error(`rejoinRoom: no game state for room ${roomKey}`);
+            return;
+        }
+        socket.join(roomKey);
+
+        // Update stored socket ID so future targeted messages reach the new socket
+        if (playerNumber === 'Player 1') {
+            gameStates[roomKey].player1SocketId = socket.id;
+        } else {
+            gameStates[roomKey].player2SocketId = socket.id;
+        }
+
+        // Update playersInRoom entry if present
+        const players = playersInRoom[roomKey];
+        if (players) {
+            const entry = players.find(p => p.name === playerName);
+            if (entry) entry.id = socket.id;
+        }
+
+        // Restore game state to the reconnected player
+        socket.emit('rejoinedGame', {
+            currentPlayer: gameStates[roomKey].currentPlayer,
+            roundNumber:   gameStates[roomKey].roundNumber,
+            scoreboard:    gameStates[roomKey].scoreboard,
+            player1Name:   gameStates[roomKey].player1Name,
+            player2Name:   gameStates[roomKey].player2Name,
+        });
+    });
+
     socket.on('disconnect', () => {
         console.log('disconnect socket called')
         // Handle player disconnection
