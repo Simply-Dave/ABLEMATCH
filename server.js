@@ -209,6 +209,11 @@ socket.on('resetGameRequest', (roomKey) => {
 });
 
 
+socket.on('broadcastRoundResult', (data) => {
+    if (!gameStates[data.roomKey]) return;
+    io.to(data.roomKey).emit('roundResult', data);
+});
+
 socket.on('liveGuess', ({ roomKey, letter, correct, wordState, guessCount }) => {
     if (!gameStates[roomKey]) return;
     const pickerSocketId = gameStates[roomKey].currentPlayer === 'Player 1'
