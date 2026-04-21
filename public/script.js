@@ -602,7 +602,7 @@ function handleGuess(inputBox) {
     updateLettersLeft();
     checkWinCondition();
 
-    socket.emit('makeGuess', roomKey, letter); // Ensure roomKey is defined and use 'letter'
+    socket.emit('makeGuess', document.getElementById('roomKey').value, letter);
 }
 
 function updateLettersLeft() {
@@ -695,30 +695,26 @@ function switchPlayers() {
 
 function checkWinCondition() {
 
-    // Determine guesser/picker using the server-assigned player number and actual names
-    const iAmPicker = (currentPlayer === myPlayerNumber);
-    const guessingPlayerName  = iAmPicker ? opponentPlayerName : myPlayerName;
-    const wordPickingPlayerName = iAmPicker ? myPlayerName : opponentPlayerName;
+    // Player numbers ('Player 1'/'Player 2') are what the server uses for scoring
+    const guesserPlayerNumber = currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
+    const pickerPlayerNumber  = currentPlayer;
 
-    console.log("Guessing Player:", guessingPlayerName, "Word Picking Player:", wordPickingPlayerName);
+    // Display names for messages
+    const guesserName = guesserPlayerNumber === myPlayerNumber ? myPlayerName : opponentPlayerName;
+    const pickerName  = pickerPlayerNumber  === myPlayerNumber ? myPlayerName : opponentPlayerName;
 
     let winner;
     let winningMessage;
     let points = 0;
 
-    console.log("Revealed Letters:", revealedLetters, "Secret Word Length:", secretWord.length, "Guess Count:", guessCount);
-
     if (revealedLetters === secretWord.length) {
-        // Guessing player wins
-        winner = guessingPlayerName;
-        points = 16 - guessCount;
-        points = Math.max(points, 1);
-        winningMessage = `You guessed the word and earned ${points} points!`;
+        winner = guesserPlayerNumber;
+        points = Math.max(16 - guessCount, 1);
+        winningMessage = `${guesserName} guessed the word and earned ${points} points!`;
     } else if (guessCount === 15) {
-        // Word-picking player wins
-        winner = wordPickingPlayerName;
+        winner = pickerPlayerNumber;
         points = 0;
-        winningMessage = `You didn't guess the word!`;
+        winningMessage = `Nobody guessed the word — ${pickerName} gets no points.`;
     }
 
     if (winner) {
