@@ -5,7 +5,7 @@ let roundNumber = 1;
 let player1Score = 0;
 let player2Score = 0;
 let guessedLetters = [];
-let currentPlayer = 1; 
+let currentPlayer = 'Player 1';
 let isSinglePlayer = false; 
 let isSinglePlayerFiveRounds = false;
 let myPlayerNumber = '';
@@ -93,12 +93,11 @@ socket.on('playerAction', (message) => {
 document.addEventListener('DOMContentLoaded', function() {
     socket.on('scoreboardUpdated', (updatedScoreboard) => {
         console.log("scoreboardUpdated socket called");
-        // Update local scoreboard variables
         player1Score = updatedScoreboard.player1Score;
         player2Score = updatedScoreboard.player2Score;
-    
-        // Call updateScoreboard to refresh the scoreboard display with updated scores and names
-        updateScoreboard(); 
+        updateScoreboard();
+        // Show Next Round for both players — the word picker has no other way to proceed
+        document.getElementById('nextRound').style.display = 'block';
     });
     
 
