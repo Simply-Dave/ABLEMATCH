@@ -33,10 +33,26 @@
     <div class="loader"></div> Waiting for other player to join...
 </div>
 
-    <div id="startScreen" class="screen">
-        
-        <button onclick="chooseMultiplayer()">2 player</button>
-        
+    <div id="startScreen">
+        <div class="home-tiles">
+            <span class="home-tile tile-green">A</span>
+            <span class="home-tile tile-yellow">B</span>
+            <span class="home-tile tile-green">L</span>
+            <span class="home-tile tile-yellow">E</span>
+        </div>
+        <h1 class="home-title">ABLE <span class="home-title-accent">Match</span></h1>
+        <p class="home-tagline">The multiplayer word guessing game</p>
+        <button class="home-play-btn" onclick="chooseMultiplayer()">2 Player</button>
+        <details class="home-rules">
+            <summary>How to play</summary>
+            <ul>
+                <li>Player 1 secretly picks a 5-letter word</li>
+                <li>Player 2 guesses it one letter at a time (up to 15)</li>
+                <li>Score = 16 minus letters used &mdash; minimum 1 point</li>
+                <li>10 rounds &mdash; roles swap each round</li>
+                <li>Most points wins!</li>
+            </ul>
+        </details>
     </div>
     
     <!-- New div for player name entry in Multiplayer mode -->
