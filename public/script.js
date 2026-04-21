@@ -818,35 +818,23 @@ function checkWinCondition() {
         isGuessing = false;
         if (document.activeElement) document.activeElement.blur();
 
+        const correct = revealedLetters === secretWord.length;
+        const resultData = { word: secretWord, guesserName, pickerName, guessCount, points, correct };
+
         setTimeout(() => {
-            updateScore(winner, points);
+            updateScore(winner, points, resultData);
             console.log("Winner determined:", winner, "Points Awarded:", points);
         }, 1000);
-
-        const correct = revealedLetters === secretWord.length;
-        const roomKey = document.getElementById('roomKey').value;
-        socket.emit('broadcastRoundResult', {
-            roomKey,
-            word: secretWord,
-            guesserName,
-            pickerName,
-            guessCount,
-            points,
-            correct,
-            isFinalRound: roundNumber > 10
-        });
-        console.log("Winner determined:", winner, "Points Awarded:", points);
     } else {
         console.log("No winner determined in this round.");
     }
 }
 
 
-function updateScore(winningPlayer, pointsAwarded) {
+function updateScore(winningPlayer, pointsAwarded, resultData) {
     console.log('updateScore function called')
-    // Send score update to server
     const roomKey = document.getElementById('roomKey').value;
-    socket.emit('updateScore', roomKey, winningPlayer, pointsAwarded);
+    socket.emit('updateScore', roomKey, winningPlayer, pointsAwarded, resultData);
 }
 
 
