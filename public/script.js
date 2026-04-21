@@ -6,9 +6,10 @@ let player1Score = 0;
 let player2Score = 0;
 let guessedLetters = [];
 let currentPlayer = 'Player 1';
-let isSinglePlayer = false; 
+let isSinglePlayer = false;
 let isSinglePlayerFiveRounds = false;
 let myPlayerNumber = '';
+let awaitingNextRound = false;
 
 
 // client-side JavaScript
@@ -613,7 +614,7 @@ function updateLettersLeft() {
 // This is your existing startNextRound function
 function startNextRound() {
     console.log('startNextRound function called')
-    
+    awaitingNextRound = false;
     updateScoreboard();
     resetCommonElements();  // Reset common UI elements
 
@@ -733,6 +734,7 @@ function checkWinCondition() {
             openModal("Game over! Your final score: " + player1Score, endGame);
             console.log("Single Player Five Rounds mode - Game over");
         } else if (roundNumber < 10 || isSinglePlayer) {
+            awaitingNextRound = true;
             document.getElementById('nextRound').style.display = 'block';
             if (guessCount === 15) {
                 showCorrectAnswer();
@@ -1075,5 +1077,8 @@ socket.on('rejoinedGame', (state) => {
     opponentPlayerName = myPlayerNumber === 'Player 1' ? state.player2Name : state.player1Name;
     updateScoreboard();
     updateRoundDisplay();
-    showUIForRole(state.currentPlayer);
+    // Don't override UI if the player is mid-round-end waiting to click Next Round
+    if (!awaitingNextRound) {
+        showUIForRole(state.currentPlayer);
+    }
 });
