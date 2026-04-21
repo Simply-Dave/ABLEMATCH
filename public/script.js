@@ -29,9 +29,9 @@ socket.on('startGuessing', (word) => {
 
 socket.on('currentPlayerUpdated', (newCurrentPlayer) => {
     console.log('currentPlayerUpdated socket called')
-    console.log("currentPlayerUpdated received. New Current Player:", newCurrentPlayer);
     currentPlayer = newCurrentPlayer;
     updateGameTextBasedOnRole();
+    showUIForRole(newCurrentPlayer);
 });
 
 
@@ -181,8 +181,7 @@ function resetClientGameState(gameState) {
     document.getElementById('endGameScreen').style.display = 'none';
     document.getElementById('gameScreen').style.display = 'block';
 
-    // Adjust the UI based on the current player's role
-    updateUIForNewRole(currentPlayer);
+    showUIForRole(currentPlayer);
 
     // Reset any additional UI elements as needed, such as the keypad
     resetKeypad();
@@ -455,21 +454,7 @@ document.querySelector('#playerTwo h2').textContent = `${player2Name}: Guess the
 
     document.getElementById('nameEntryScreen').style.display = 'none';
 
-    // Check player roles and display the appropriate UI
-    if (myPlayerNumber === 'Player 1') {
-        document.getElementById('playerOne').style.display = 'block';
-        document.getElementById('playerTwo').style.display = 'none';
-    } else if (myPlayerNumber === 'Player 2') {
-        document.getElementById('playerOne').style.display = 'none';
-        document.getElementById('playerTwo').style.display = 'none';
-
-        // Display the waiting message for Player 2
-        const playerTwoMessage = document.getElementById('playerTwoMessage');
-        if (playerTwoMessage) {
-            playerTwoMessage.style.display = 'block';
-            playerTwoMessage.textContent = `${player1Name} is picking a word`;
-        }
-    }
+    showUIForRole('Player 1'); // Player 1 always picks first
 }
 
 
@@ -644,10 +629,7 @@ function startNextRound() {
 
 // Set up the event listener for the 'nextRound' button
 document.getElementById('nextRound').addEventListener('click', () => {
-    const roomKey = document.getElementById('roomKey').value; // Adjust based on how roomKey is stored
-    socket.emit('endRound', roomKey);
-    
-    startNextRound(); // Call startNextRound function here
+    startNextRound();
 });
     
 
@@ -673,34 +655,21 @@ function resetCommonElements() {
 socket.on('updateRole', (newRole) => {
     console.log('updateRole socket called')
     myPlayerNumber = newRole;
-    updateUIForNewRole();  // Call a function to update UI based on new role
+    showUIForRole(currentPlayer);
 });
 
-function updateUIForNewRole(currentPlayer) {
-    console.log("updateUIForNewRole function called", currentPlayer);
-
-    // Hide both UI sections initially
+function showUIForRole(pickerPlayerNumber) {
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerTwo').style.display = 'none';
     document.getElementById('playerOneMessage').style.display = 'none';
     document.getElementById('playerTwoMessage').style.display = 'none';
 
-    // Show UI elements based on currentPlayer and myPlayerNumber
-    if (currentPlayer === myPlayerNumber) {
-        if (myPlayerNumber === 'Player 1') {
-            document.getElementById('playerOne').style.display = 'block';
-            document.getElementById('playerTwoMessage').textContent = 'Waiting for Player 2 to guess...';
-        } else {
-            document.getElementById('playerTwo').style.display = 'block';
-            document.getElementById('playerOneMessage').textContent = 'Waiting for Player 1 to pick a word...';
-        }
+    if (pickerPlayerNumber === myPlayerNumber) {
+        document.getElementById('playerOne').style.display = 'block';
     } else {
-        if (myPlayerNumber === 'Player 1') {
-            document.getElementById('playerOneMessage').textContent = 'Player 2 is picking a word...';
-        } else {
-            document.getElementById('playerTwoMessage').textContent = 'Player 1 is picking a word...';
-        }
-        document.getElementById(myPlayerNumber === 'Player 1' ? 'playerOneMessage' : 'playerTwoMessage').style.display = 'block';
+        const msgId = myPlayerNumber === 'Player 1' ? 'playerOneMessage' : 'playerTwoMessage';
+        document.getElementById(msgId).textContent = `${opponentPlayerName} is picking a word...`;
+        document.getElementById(msgId).style.display = 'block';
     }
 }
 
@@ -728,22 +697,6 @@ function switchPlayers() {
     updateGameTextBasedOnRole();
 }
 
-function updateGameText() {
-    console.log('updateGameText function called')
-    // Use global variables that hold the current player and opponent names.
-    const player1Name = myPlayerNumber === 'Player 1' ? myPlayerName : opponentPlayerName;
-    const player2Name = myPlayerNumber === 'Player 2' ? myPlayerName : opponentPlayerName;
-
-    // Determine which text to display based on the currentPlayer variable.
-    if (currentPlayer === 'Player 1') {
-        document.querySelector('#playerOne h2').textContent = `${player1Name}: Enter a 5-letter Word`;
-        document.querySelector('#playerTwo h2').textContent = `${player2Name}: Guess the Word`;
-    } else {
-        document.querySelector('#playerOne h2').textContent = `${player2Name}: Enter a 5-letter Word`;
-        document.querySelector('#playerTwo h2').textContent = `${player1Name}: Guess the Word`;
-    }
-}
-    
 function checkWinCondition() {
     
     const player1Name = document.getElementById('player1Name').value || 'Player 1';
