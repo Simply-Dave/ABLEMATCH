@@ -98,24 +98,20 @@ io.to(gameStates[roomKey].player1SocketId).emit('startTurn');
         }
     });
     
-socket.on('endRound', (roomKey) => {
+socket.on('endRound', ({ roomKey, currentPlayer }) => {
     console.log('endRound socket called')
-    if (gameStates[roomKey]) {
-        // Toggle the current player
-        gameStates[roomKey].currentPlayer = gameStates[roomKey].currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
-
-
-         // Log the updated game state
-         console.log(`Room ${roomKey} - Current Player: ${gameStates[roomKey].currentPlayer}, Round Number: ${gameStates[roomKey].roundNumber}`);
-
-        // Emit to both players the updated currentPlayer and the new round number
-        io.to(gameStates[roomKey].player1SocketId).emit('currentPlayerUpdated', gameStates[roomKey].currentPlayer);
-        io.to(gameStates[roomKey].player2SocketId).emit('currentPlayerUpdated', gameStates[roomKey].currentPlayer);
-
-        
-    } else {
+    if (!gameStates[roomKey]) {
         console.error(`Game state not found for room: ${roomKey}`);
+        return;
     }
+    // Ignore duplicate endRound emissions — only process if player hasn't switched yet
+    if (gameStates[roomKey].currentPlayer !== currentPlayer) {
+        console.log(`endRound ignored for room ${roomKey} — already toggled`);
+        return;
+    }
+    gameStates[roomKey].currentPlayer = currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
+    console.log(`Room ${roomKey} - Current Player: ${gameStates[roomKey].currentPlayer}, Round: ${gameStates[roomKey].roundNumber}`);
+    io.to(roomKey).emit('currentPlayerUpdated', gameStates[roomKey].currentPlayer);
 });
 
 socket.on('updateScore', (roomKey, playerNumber, points) => {
