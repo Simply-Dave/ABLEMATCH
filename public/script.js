@@ -10,6 +10,7 @@ let isSinglePlayer = false;
 let isSinglePlayerFiveRounds = false;
 let myPlayerNumber = '';
 let awaitingNextRound = false;
+let isGuessing = false;
 
 
 // client-side JavaScript
@@ -18,6 +19,7 @@ const socket = io(); // Adjust the URL to your server
 socket.on('startGuessing', (word) => {
     console.log("startGuessing socket called:", word);
     secretWord = word;
+    isGuessing = true;
     preparePlayerTwoScreen();
 
     // Show the guessing interface for the current player
@@ -632,6 +634,7 @@ document.getElementById('nextRound').addEventListener('click', () => {
 // New function to reset common UI elements
 function resetCommonElements() {
     console.log('resetCommonElements function called')
+    isGuessing = false;
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerTwo').style.display = 'none';
     document.getElementById('playerOneMessage').style.display = 'none';
@@ -719,6 +722,7 @@ function checkWinCondition() {
     }
 
     if (winner) {
+        isGuessing = false;
         // Add a 2-second delay before updating the scoreboard
         setTimeout(() => {
             updateScore(winner, points);
@@ -1077,8 +1081,13 @@ socket.on('rejoinedGame', (state) => {
     opponentPlayerName = myPlayerNumber === 'Player 1' ? state.player2Name : state.player1Name;
     updateScoreboard();
     updateRoundDisplay();
-    // Don't override UI if the player is mid-round-end waiting to click Next Round
-    if (!awaitingNextRound) {
+    if (isGuessing) {
+        // Reconnected mid-guess — restore guessing UI
+        document.getElementById('playerOne').style.display = 'none';
+        document.getElementById('playerTwo').style.display = 'block';
+        document.getElementById('playerOneMessage').style.display = 'none';
+        document.getElementById('playerTwoMessage').style.display = 'none';
+    } else if (!awaitingNextRound) {
         showUIForRole(state.currentPlayer);
     }
 });
