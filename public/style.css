@@ -1,0 +1,448 @@
+body {
+  padding-top: 150px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+}
+
+.screen {
+  /* Styles for individual sections */
+  text-align: center;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  padding: 30px;
+  margin: 20px;
+  transition: box-shadow 0.3s;
+}
+
+.screen:hover {
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+}
+
+#wordDisplay, #letterGuesses {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.letterBox, .wordEntry {
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  border: 2px solid #333;
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 20px;
+  border-radius: 5px;
+  transition: transform 0.2s;
+}
+
+/* Container for guess boxes */
+#letterGuesses {
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  overflow-x: auto; /* Allows scrolling if boxes overflow */
+  width: 100%; /* Adjust if necessary */
+  padding: 5px 0; /* Add some padding */
+}
+
+/* Individual guess boxes */
+.guessBox {
+  box-sizing: border-box;
+  border: 2px solid #333;
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 20px;
+  border-radius: 5px;
+  transition: transform 0.2s;
+}
+
+
+.letterBox:hover, .guessBox:hover {
+  transform: scale(1.1);
+}
+
+.correctGuess {
+  background-color: #98fb98;
+  border-color: #2e8b57;
+}
+
+.scoreboard {
+  font-size: 20px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  margin: 20px; /* Adjust margin to match the .screen class */
+  text-align: center;
+  width: calc(100% - 60px); /* Assuming .screen has 30px padding on each side */
+}
+
+button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  margin-top: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+#nextRound {
+  margin-top: 0px;
+}
+
+#wordInput {
+  text-transform: uppercase;
+}
+
+#usedLettersDisplay {
+  margin-top: 20px;
+  text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+  body {
+    justify-content: flex-start; /* Aligns items to the top of the viewport */
+  }
+  .screen:first-child {
+    margin-top: 10px; /* Reduces the top margin for the first .screen element */
+  }
+  .screen {
+    width: 90%;
+    margin: 10px auto;
+  }
+  #wordDisplay, #letterGuesses {
+    flex-wrap: nowrap; /* Prevent wrapping */
+  }
+  .letterBox, .guessBox {
+    width: 16%; /* Reduced width */
+    margin: 3px; /* Adjust margin if needed */
+    padding: 2px; /* Adjust padding if needed */
+  }
+  button {
+    padding: 15px 30px; /* Larger buttons for easier touch */
+  }
+}
+
+
+
+.no-scroll {
+  position: fixed;
+  overflow-y: scroll;
+  width: 100%;
+}
+
+.keypad {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.key {
+  margin: 5px;
+  padding: 10px 15px;
+  border: 1px solid black; /* Black border */
+  border-radius: 5px;
+  background-color: white; /* White background */
+  color: black; /* Black text color */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Transition for smooth effect */
+}
+
+.key:hover, .key:active {
+  background-color: #d3d3d3; /* Grey background on hover and active */
+  color: #333; /* Slightly darker text color for better contrast */
+  border-color: #d3d3d3; /* Grey border color */
+}
+
+.key-clicked {
+  background-color: #d3d3d3; /* Grey background */
+  color: #333; /* Slightly darker text color for better contrast */
+  border-color: #d3d3d3; /* Grey border color */
+}
+
+.button-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+}
+
+.answer-and-button-container {
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center elements horizontally */
+  justify-content: center; /* Center elements vertically if there's extra space */
+  width: 100%; /* Take full width of the parent container */
+  margin-top: 10px; /* Add some space above the container */
+}
+
+#instructions {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#instructions h3 {
+  color: #28a745;
+  margin-bottom: 10px;
+}
+
+#instructions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#instructions ul li {
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+#instructions ul li:last-child {
+  border-bottom: none;
+}
+
+#instructions p {
+  margin-top: 15px;
+}
+
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.confirmation-buttons button {
+  padding: 10px 20px;
+  margin: 0 10px;
+}
+
+.loader {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 3px solid #333;
+  border-radius: 50%;
+  border-top: 3px solid #fff;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+#waitingForPlayerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 5vh; /* Adjust based on your layout needs */
+}
+
+#waitingForPlayerMessage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align items to the start of the container */
+  text-align: center;
+  height: 100vh;
+  padding-top: 20vh; /* Adjust this value to move the message down */
+}
+
+
+/* Mobile styles: by default, show text and hide boxes */
+.guesses-text {
+  display: block; /* Show the guesses left text */
+}
+
+#generatekey {
+  width: 100%; /* Adjusts the width to half of its container's width */
+  font-size: 0.8em; /* Adjusts the font size to be smaller */
+  padding: 5px 10px; /* Adjusts padding for better alignment */
+  /* Add any additional styling as needed */
+}
+
+#mainContainer {
+  position: relative;
+  height: 100vh; /* Or however you choose to size this container */
+}
+
+#roomKeyDisplay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 8px;
+  z-index: 1000; /* Ensures it stays above other content */
+}
+
+#roomkeydisplay {
+  position: fixed;
+  top: 0px; /* Adjust as needed */
+  right: 10px;
+  background-color: #f0f0f0;
+  padding: 1px;
+  border-radius: 1px;
+  box-shadow: 0 0px 0px rgba(0,0,0,0.2);
+  z-index: 1000; /* Ensures it's above most other elements */
+  font-size: 12px;
+}
+
+#endGameScreen {
+  background-color: #ffffff; /* Light background for the game over screen */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  text-align: center;
+  max-width: 400px; /* Adjust as needed */
+  margin: 20px auto; /* Center the div on the page */
+  display: none; /* Hide by default */
+}
+
+#endGameScreen h2 {
+  color: #333; /* Dark grey color for text */
+  margin-bottom: 15px;
+}
+
+#endGameScreen p {
+  font-size: 18px; /* Slightly larger text for readability */
+  color: #555; /* Medium grey color for the scores */
+  margin: 10px 0;
+}
+
+#restartGameButton {
+  background-color: #4CAF50; /* Green background for the button */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+#restartGameButton:hover {
+  background-color: #45a049; /* Darker green on hover */
+  transform: scale(1.05); /* Slightly increase size on hover */
+}
+
+
+/* Mobile styles: Explicit for smaller screens */
+@media (max-width: 727px) {
+  .guessBox {
+      display: none; /* Hide the guess boxes */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  /* Adjustments for #playerOne are already provided above */
+  
+  #playerTwo {
+    width: 100%; /* Use the full width available to ensure it doesn't overflow */
+    padding: 20px; /* Adjust padding to ensure content doesn't touch the edges */
+    box-sizing: border-box; /* Include padding in the element's total width */
+    margin: auto; /* Center align the div */
+    text-align: center; /* Ensure text and child elements are centered */
+  }
+
+  #playerTwo h2 {
+    font-size: 18px; /* Adjust heading size for smaller screens */
+    margin: 10px 0; /* Reduce margin around heading for tighter layout */
+  }
+
+  #wordDisplay, #letterGuesses {
+    justify-content: center; /* Center the flex containers */
+    flex-wrap: wrap; /* Allow items to wrap if needed */
+    max-width: 90%; /* Limit max width to avoid overflow and ensure padding */
+    margin: 0 auto; /* Center align these divs */
+  }
+
+  #wordDisplay .letterBox, #letterGuesses .guessBox {
+    margin: 5px; /* Adjust margin for spacing */
+    width: 40px; /* Adjust width to fit on smaller screens */
+    height: 40px; /* Adjust height for a uniform appearance */
+    font-size: 16px; /* Increase font size for better visibility */
+  }
+
+  .guesses-text {
+    display: block; /* Ensure visibility of text on mobile */
+    font-size: 16px; /* Adjust for readability */
+    margin-top: 10px; /* Space from the guess boxes or word display */
+  }
+}
+
+
+
+/* Desktop styles */
+@media (min-width: 728px) {
+  .guesses-text {
+      display: none; /* Hide the guesses left text */
+  }
+
+  .guessBox {
+      display: block; /* Show the guess boxes */
+  }
+}
+
