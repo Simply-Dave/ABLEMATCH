@@ -694,22 +694,11 @@ function switchPlayers() {
 }
 
 function checkWinCondition() {
-    
-    const player1Name = document.getElementById('player1Name').value || 'Player 1';
-    const player2Name = document.getElementById('player2Name').value || 'Player 2';
-    console.log("Player 1 Name:", player1Name, "Player 2 Name:", player2Name);
 
-    let guessingPlayerName, wordPickingPlayerName;
-
-    if (roundNumber === 1) {
-        // In the first round, Player 1 is the word picker and Player 2 is the guesser
-        guessingPlayerName = player2Name;
-        wordPickingPlayerName = player1Name;
-    } else {
-        // From the second round onwards, determine based on currentPlayer
-        guessingPlayerName = currentPlayer === 'Player 1' ? player2Name : player1Name;
-        wordPickingPlayerName = currentPlayer === 'Player 1' ? player1Name : player2Name;
-    }
+    // Determine guesser/picker using the server-assigned player number and actual names
+    const iAmPicker = (currentPlayer === myPlayerNumber);
+    const guessingPlayerName  = iAmPicker ? opponentPlayerName : myPlayerName;
+    const wordPickingPlayerName = iAmPicker ? myPlayerName : opponentPlayerName;
 
     console.log("Guessing Player:", guessingPlayerName, "Word Picking Player:", wordPickingPlayerName);
 
@@ -1068,3 +1057,27 @@ document.getElementById('restartGameButton').addEventListener('click', function(
 
 // Keep server awake on free-tier hosting — ping every 10 minutes
 setInterval(() => fetch('/ping'), 10 * 60 * 1000);
+
+// Reconnection — re-join room so the server can restore game state
+let hasConnectedBefore = false;
+socket.on('connect', () => {
+    if (!hasConnectedBefore) { hasConnectedBefore = true; return; }
+    console.log('Reconnected — rejoining room');
+    const roomKey = document.getElementById('roomKey').value;
+    if (roomKey && myPlayerName && myPlayerNumber) {
+        socket.emit('rejoinRoom', { roomKey, playerName: myPlayerName, playerNumber: myPlayerNumber });
+    }
+});
+
+socket.on('rejoinedGame', (state) => {
+    console.log('Game state restored after reconnect');
+    currentPlayer  = state.currentPlayer;
+    roundNumber    = state.roundNumber;
+    player1Score   = state.scoreboard.player1Score;
+    player2Score   = state.scoreboard.player2Score;
+    myPlayerName       = myPlayerNumber === 'Player 1' ? state.player1Name : state.player2Name;
+    opponentPlayerName = myPlayerNumber === 'Player 1' ? state.player2Name : state.player1Name;
+    updateScoreboard();
+    updateRoundDisplay();
+    showUIForRole(state.currentPlayer);
+});
