@@ -23,6 +23,7 @@ socket.on('startGuessing', (word) => {
     preparePlayerTwoScreen();
 
     // Show the guessing interface for the current player
+    document.getElementById('spectatorView').style.display = 'none';
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerTwo').style.display = 'block';
     document.getElementById('playerOneMessage').style.display = 'none';
