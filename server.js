@@ -98,22 +98,6 @@ io.to(gameStates[roomKey].player1SocketId).emit('startTurn');
         }
     });
     
-    // Add an event listener for the turnChanged event
-socket.on('turnChanged', (currentPlayer) => {
-    console.log('turnChanged socket called')
-    if (currentPlayer === myPlayerNumber) {
-        // It's this client's turn to pick a word
-        document.getElementById(currentPlayer === 'Player 1' ? 'playerOne' : 'playerTwo').style.display = 'block';
-        document.getElementById(currentPlayer === 'Player 1' ? 'playerTwoMessage' : 'playerOneMessage').style.display = 'none';
-    } else {
-        // It's this client's turn to wait
-        document.getElementById('playerOne').style.display = 'none';
-        document.getElementById('playerTwo').style.display = 'none';
-        document.getElementById(currentPlayer === 'Player 1' ? 'playerTwoMessage' : 'playerOneMessage').textContent = `${currentPlayer} is picking a word`;
-        document.getElementById(currentPlayer === 'Player 1' ? 'playerTwoMessage' : 'playerOneMessage').style.display = 'block';
-    }
-});
-
 socket.on('endRound', (roomKey) => {
     console.log('endRound socket called')
     if (gameStates[roomKey]) {
@@ -141,9 +125,8 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
         const scoreKey = playerNumber === 'Player 1' ? 'player1Score' : 'player2Score';
         gameStates[roomKey].scoreboard[scoreKey] += points;
 
-        // Increment the round number and toggle the current player
+        // Increment the round number
         gameStates[roomKey].roundNumber++;
-        gameStates[roomKey].currentPlayer = gameStates[roomKey].currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
 
         console.log(`Updated scores in room ${roomKey}:`, gameStates[roomKey].scoreboard);
         console.log(`Room ${roomKey} - Current Player: ${gameStates[roomKey].currentPlayer}, Round Number: ${gameStates[roomKey].roundNumber}`);
@@ -153,7 +136,7 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
         io.to(roomKey).emit('roundNumberUpdated', gameStates[roomKey].roundNumber);
 
         // Check for game over condition
-        const MAX_ROUNDS = 7; // Example: Game ends after 5 rounds
+        const MAX_ROUNDS = 10;
         if (gameStates[roomKey].roundNumber >= MAX_ROUNDS) {
             // Assume determineWinner is a function that returns 'Player 1' or 'Player 2'
             let winner = determineWinner(gameStates[roomKey]);
@@ -170,8 +153,6 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
 
         
         }
-
-        gameStates[roomKey].currentPlayer = gameStates[roomKey].currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
     }
 });
 
@@ -275,7 +256,7 @@ socket.on('startGuessing', (roomKey) => {
         console.log('disconnect socket called')
         // Handle player disconnection
         for (const roomKey in playersInRoom) {
-            const index = playersInRoom[roomKey].indexOf(socket.id);
+            const index = playersInRoom[roomKey].findIndex(p => p.id === socket.id);
             if (index !== -1) {
                 playersInRoom[roomKey].splice(index, 1);
                 if (playersInRoom[roomKey].length === 0) {
