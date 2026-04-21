@@ -411,6 +411,97 @@ input[type="text"]:focus {
   to { transform: rotate(360deg); }
 }
 
+/* ── Round result overlay ────────────────────────────────────────── */
+#roundResultOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: fadeIn 0.35s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.round-result-card {
+  text-align: center;
+  padding: 40px 32px;
+  background: rgba(15, 23, 42, 0.97);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  max-width: 360px;
+  width: 90%;
+}
+
+.round-result-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+
+.round-result-word-display {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.round-result-letter {
+  width: 50px;
+  height: 50px;
+  background: #538d4e;
+  border: 2px solid #4ade80;
+  border-radius: 10px;
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  animation: popIn 0.25s ease backwards;
+}
+
+.round-result-letter-missed {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.round-result-message {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.round-result-points {
+  font-size: 36px;
+  font-weight: 900;
+  color: #4ade80;
+  margin: 0;
+  letter-spacing: 1px;
+}
+
+.round-result-points-zero {
+  color: rgba(255,255,255,0.3);
+}
+
 /* ── End game screen ─────────────────────────────────────────────── */
 #endGameScreen {
   background: rgba(255,255,255,0.06);
