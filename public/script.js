@@ -620,7 +620,7 @@ function startNextRound() {
 
     // Notify server to end the round and switch roles
     const roomKey = document.getElementById('roomKey').value;
-    socket.emit('endRound', roomKey);
+    socket.emit('endRound', { roomKey, currentPlayer });
 }
 
 // Set up the event listener for the 'nextRound' button
