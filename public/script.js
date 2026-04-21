@@ -30,6 +30,56 @@ socket.on('startGuessing', (word) => {
 });
 
 
+socket.on('player2Guessing', () => {
+    document.getElementById('playerOne').style.display = 'none';
+    document.getElementById('playerOneMessage').style.display = 'none';
+    document.getElementById('playerTwoMessage').style.display = 'none';
+
+    const view = document.getElementById('spectatorView');
+    view.style.display = 'block';
+    document.getElementById('spectatorLabel').textContent = `${opponentPlayerName} is guessing…`;
+
+    // Build word boxes
+    const wordDisplay = document.getElementById('spectatorWordDisplay');
+    wordDisplay.innerHTML = '';
+    for (let i = 0; i < 5; i++) {
+        const div = document.createElement('div');
+        div.className = 'letterBox';
+        div.id = 'spectatorBox' + i;
+        wordDisplay.appendChild(div);
+    }
+
+    // Reset counter
+    document.getElementById('spectatorGuessesLeft').textContent = '15';
+
+    // Build read-only keypad
+    const keypad = document.getElementById('spectatorKeypad');
+    keypad.innerHTML = '';
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(letter => {
+        const btn = document.createElement('div');
+        btn.className = 'key spectator-key';
+        btn.id = 'spectatorKey' + letter;
+        btn.textContent = letter;
+        keypad.appendChild(btn);
+    });
+});
+
+socket.on('spectatorUpdate', ({ letter, correct, wordState, guessCount }) => {
+    // Reveal correct letters in word boxes
+    wordState.forEach((ch, i) => {
+        const box = document.getElementById('spectatorBox' + i);
+        if (box && ch) {
+            box.textContent = ch.toUpperCase();
+            box.classList.add('correctGuess');
+        }
+    });
+    // Update guesses left
+    document.getElementById('spectatorGuessesLeft').textContent = 15 - guessCount;
+    // Colour the tried letter on the read-only keypad
+    const key = document.getElementById('spectatorKey' + letter.toUpperCase());
+    if (key) key.classList.add(correct ? 'spectator-key-correct' : 'spectator-key-wrong');
+});
+
 socket.on('currentPlayerUpdated', (newCurrentPlayer) => {
     console.log('currentPlayerUpdated socket called')
     currentPlayer = newCurrentPlayer;
@@ -605,7 +655,10 @@ function handleGuess(inputBox) {
     updateLettersLeft();
     checkWinCondition();
 
-    socket.emit('makeGuess', document.getElementById('roomKey').value, letter);
+    const roomKey = document.getElementById('roomKey').value;
+    const wordState = Array.from({length: 5}, (_, i) => document.getElementById('letterBox' + i).textContent);
+    socket.emit('liveGuess', { roomKey, letter, correct: found, wordState, guessCount });
+    socket.emit('makeGuess', roomKey, letter);
 }
 
 function updateLettersLeft() {
@@ -635,6 +688,7 @@ document.getElementById('nextRound').addEventListener('click', () => {
 function resetCommonElements() {
     console.log('resetCommonElements function called')
     isGuessing = false;
+    document.getElementById('spectatorView').style.display = 'none';
     document.getElementById('playerOne').style.display = 'none';
     document.getElementById('playerTwo').style.display = 'none';
     document.getElementById('playerOneMessage').style.display = 'none';
