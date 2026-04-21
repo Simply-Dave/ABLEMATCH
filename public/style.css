@@ -551,6 +551,7 @@ input[type="text"]:focus {
 
 .home-tiles {
   display: flex;
+  justify-content: center;
   gap: 10px;
   margin-bottom: 28px;
 }
