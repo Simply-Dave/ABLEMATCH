@@ -264,6 +264,57 @@ input[type="text"]:focus {
   text-align: center;
 }
 
+/* ── Spectator view ──────────────────────────────────────────────── */
+#spectatorView {
+  text-align: center;
+  padding: 16px 8px 8px;
+}
+
+.spectator-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4ade80;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
+.spectator-label::before {
+  content: '⬤ ';
+  color: #4ade80;
+}
+
+#spectatorWordDisplay {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 8px;
+}
+
+.spectator-keypad {
+  margin-top: 8px;
+}
+
+.spectator-key {
+  pointer-events: none;
+  cursor: default;
+  padding: 5px 9px;
+  font-size: 12px;
+  margin: 3px;
+  opacity: 0.85;
+}
+
+.spectator-key-correct {
+  background: #538d4e !important;
+  border-color: #4ade80 !important;
+  color: #fff !important;
+}
+
+.spectator-key-wrong {
+  background: #2d3748 !important;
+  border-color: #2d3748 !important;
+  color: rgba(255,255,255,0.25) !important;
+}
+
 /* ── Word input ──────────────────────────────────────────────────── */
 #wordInput {
   text-transform: uppercase;
