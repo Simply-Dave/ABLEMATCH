@@ -134,7 +134,7 @@ socket.on('updateScore', (roomKey, playerNumber, points) => {
         io.to(roomKey).emit('roundNumberUpdated', gameStates[roomKey].roundNumber);
 
         // Check for game over condition
-        const MAX_ROUNDS = 10;
+        const MAX_ROUNDS = 11;
         if (gameStates[roomKey].roundNumber >= MAX_ROUNDS) {
             // Assume determineWinner is a function that returns 'Player 1' or 'Player 2'
             let winner = determineWinner(gameStates[roomKey]);
