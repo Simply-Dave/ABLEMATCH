@@ -116,12 +116,20 @@
         </div>
         
 
-        <!-- Message for Player 1 when waiting for Player 2 to guess the word -->
-<p id="playerOneMessage" style="display: none;"></p>
-
         <!-- Message for Player 2 when waiting for Player 1 to pick a word -->
         <p id="playerTwoMessage" style="display: none;"></p>
-    
+
+        <!-- Live spectator view shown to the picker while opponent is guessing -->
+        <div id="spectatorView" style="display:none;">
+            <p class="spectator-label" id="spectatorLabel"></p>
+            <div id="spectatorWordDisplay"></div>
+            <div class="guesses-text">Guesses left: <span id="spectatorGuessesLeft">15</span></div>
+            <div id="spectatorKeypad" class="keypad spectator-keypad"></div>
+        </div>
+
+        <!-- Message for Player 1 when waiting for Player 2 to guess the word -->
+        <p id="playerOneMessage" style="display: none;"></p>
+
         <div id="playerOne" class="screen">
             <h2>Enter a 5-letter Word</h2>
             <input type="text" id="wordInput" maxlength="5">
